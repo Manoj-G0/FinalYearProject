@@ -1,0 +1,111 @@
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), url('https://source.unsplash.com/1600x900/?technology,ai')) no-repeat center;
+    background-size: cover;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    padding: 50px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero h1 {
+    font-size: 4rem;
+    font-weight: bold;
+  }
+  
+  .hero p {
+    font-size: 1.5rem;
+    margin: 20px 0;
+  }
+  
+  .ctaButton {
+    animation: fadeIn 3s ease-in-out;
+  }
+  
+  /* Features Section */
+  .features {
+    padding: 80px 20px;
+    background: #fff;
+  }
+  
+  .featureBox {
+    text-align: center;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .featureBox:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .featureBox img {
+    width: 80px;
+    margin-bottom: 20px;
+  }
+  
+  .featureBox h4 {
+    font-size: 1.5rem;
+    margin: 15px 0;
+  }
+  
+  .featureBox p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  /* How It Works Section */
+  .howItWorks {
+    background: #f4f4f9;
+    padding: 80px 20px;
+  }
+  
+  .howItWorks h2 {
+    margin-bottom: 50px;
+  }
+  
+  .howItWorks .col-md-4 {
+    padding: 20px;
+  }
+  
+  .howItWorks h4 {
+    font-size: 1.5rem;
+    margin: 15px 0;
+  }
+  
+  .howItWorks p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  /* Footer Section */
+  .footer {
+    background: #222;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+  }
+  
+  /* Animations */
+  @keyframes fadeInDown {
+    0% { opacity: 0; transform: translateY(-50px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(50px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }

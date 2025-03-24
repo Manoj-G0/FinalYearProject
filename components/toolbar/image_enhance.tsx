@@ -6,7 +6,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Image, Wand2 } from "lucide-react";
+import { Image, Wand2, Expand } from "lucide-react";
 import { useLayerStore } from "@/lib/layer-store";
 import { toast } from "sonner";
 import { AnimatePresence, motion } from "framer-motion";
@@ -42,6 +42,12 @@ export default function ImageEnhance() {
         enhancedImageUrl = activeLayer.url.replace(
           "/upload/",
           "/upload/e_gen_restore/"
+        );
+      } else if (type === "upscale") {
+        // Apply Cloudinary e_upscale transformation
+        enhancedImageUrl = activeLayer.url.replace(
+          "/upload/",
+          "/upload/e_upscale/"
         );
       } else {
         // Call the existing enhancement function
@@ -109,6 +115,14 @@ export default function ImageEnhance() {
             AI Restore (e_gen_restore) <Image size={16} className="ml-2" />
           </Button>
 
+          <Button
+            disabled={generating}
+            onClick={() => handleEnhanceImage("upscale")}
+            className="w-full"
+          >
+            Upscale Image (e_upscale) <Expand size={16} className="ml-2" />
+          </Button>
+
           <AnimatePresence>
             {generating && (
               <motion.div
@@ -133,4 +147,4 @@ export default function ImageEnhance() {
       </PopoverContent>
     </Popover>
   );
-}
+} 

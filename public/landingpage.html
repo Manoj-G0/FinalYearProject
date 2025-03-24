@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image & Video Enhancer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8E2DE2;
+            --secondary: #4A00E0;
+            --dark: #121212;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            color: rgb(11, 11, 11);
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* background: linear-gradient(135deg, var(--primary), var(--secondary)); */
+            background: rgb(63,94,251);
+background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+            z-index: -2;
+        }
+        
+        .hero::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('/api/placeholder/1600/900') no-repeat center;
+            background-size: cover;
+            opacity: 0.2;
+            z-index: -1;
+        }
+        
+        .hero-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+            animation: fadeIn 1.2s ease-out;
+        }
+        
+        /* Custom Button */
+        .btn-glow {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(225, 109, 145, 0.4);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1.4s ease-out;
+        }
+        
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(179, 94, 169, 0.6);
+            color: white;
+        }
+        
+        .btn-glow::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-100%);
+            transition: transform 0.4s ease-out;
+        }
+        
+        .btn-glow:hover::after {
+            transform: translateX(0);
+        }
+        
+        /* Navbar */
+        .navbar {
+            transition: all 0.3s ease;
+            background-color: transparent;
+            padding: 20px 0;
+        }
+        
+        .navbar-scrolled {
+            background-color: rgba(18, 18, 18, 0.95);
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: rgb(168, 217, 250);
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+        
+        /* Features */
+        .features {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(142, 45, 226, 0.1);
+        }
+        
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 10px 20px rgba(142, 45, 226, 0.3);
+        }
+        
+        .feature-card h4 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .feature-card p {
+            color: #666;
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        
+        /* How It Works */
+        .how-it-works {
+            padding: 100px 0;
+            background-color: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .how-it-works::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(142, 45, 226, 0.03), rgba(74, 0, 224, 0.03));
+            z-index: 0;
+        }
+        
+        .process-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .process-number {
+            font-size: 5rem;
+            font-weight: 800;
+            color: rgba(142, 45, 226, 0.1);
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: -1;
+        }
+        
+        .process-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: var(--primary);
+            font-size: 2.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+        }
+        
+        .process-item h4 {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .process-item p {
+            color: #666;
+        }
+        
+        .process-arrow {
+            position: absolute;
+            top: 50px;
+            right: -50px;
+            width: 100px;
+            height: 20px;
+            color: var(--primary);
+            opacity: 0.3;
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .process-arrow {
+                display: block;
+            }
+        }
+        
+        /* Gallery Section */
+        .gallery {
+            padding: 100px 0;
+            background-color: white;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-caption {
+            color: white;
+            font-weight: 500;
+        }
+        
+        /* CTA Section */
+        .cta {
+            padding: 80px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-align: center;
+        }
+        
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        
+        .cta p {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .btn-light-outline {
+            color: white;
+            background: transparent;
+            border: 2px solid white;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-light-outline:hover {
+            background: white;
+            color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: rgba(255,255,255,0.8);
+            padding: 60px 0 30px;
+        }
+        
+        .footer h5 {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer h5::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .social-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        
+        .social-links li {
+            margin-right: 15px;
+        }
+        
+        .social-links a {
+            color: rgba(255,255,255,0.6);
+            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        
+        .social-links a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                EnhanceAI
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        
+                        
+                        <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#gallery">Gallery</a>
+                    </li>
+                    <!-- <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li> -->
+                    <!-- <li class="nav-item">
+                        <a class="nav-link btn-glow ms-2" href="#signup">Get Started</a>
+                    </li> -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content" style="margin-top: 100px;">
+                <h1>Transform Your Media with AI</h1>
+                <p>Instantly enhance your images and videos with our state-of-the-art AI technology. Get professional-quality results in seconds.</p>
+                <a href="../app/page" class="btn btn-glow">Lets Enhance 🔥<i class="fas fa-arrow-right ms-2"></i></a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Powerful Features</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <h4>Image Enhancement</h4>
+                        <p>Automatically improve resolution, remove noise, and enhance details in any image with our advanced AI algorithms.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <h4>Video Upscaling</h4>
+                        <p>Convert low-resolution videos to high-definition with intelligent frame-by-frame processing and enhancement.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-magic"></i>
+                        </div>
+                        <h4>Smart Retouching</h4>
+                        <p>Perfect portraits with automatic skin smoothing, lighting correction, and facial feature enhancement.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-palette"></i>
+                        </div>
+                        <h4>Color Correction</h4>
+                        <p>Bring vibrant colors to life with AI-powered color grading, white balance fixing, and tone mapping.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h4>Cloud Processing</h4>
+                        <p>Process your media on our powerful servers with no software installation required. Access from any device.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4>Instant Results</h4>
+                        <p>Get enhanced media in seconds with our optimized processing engines and parallel computing architecture.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">How It Works</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-5">
+                    <div class="process-item">
+                        <div class="process-number">1</div>
+                        <div class="process-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h4>Upload</h4>
+                        <p>Simply upload your images or videos to our secure platform from any device.</p>
+                    </div>
+                    <div class="process-arrow">
+                        <i class="fas fa-long-arrow-alt-right fa-2x"></i>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="process-item">
+                        <div class="process-number">2</div>
+                        <div class="process-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <h4>Process</h4>
+                        <p>Our AI analyzes and enhances your media using advanced neural networks.</p>
+                    </div>
+                    <div class="process-arrow">
+                        <i class="fas fa-long-arrow-alt-right fa-2x"></i>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-5">
+                    <div class="process-item">
+                        <div class="process-number">3</div>
+                        <div class="process-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h4>Download</h4>
+                        <p>Download your enhanced media in seconds and enjoy the stunning results.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery" id="gallery">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">See The Difference</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\img2.png" alt="Before and After 1">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Original Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\genf2.png" alt="Before and After 2">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Original Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\recol1.png" alt="Before and After 3">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Original Image</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\img1.png" alt="Before and After 4">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Enhanced Pic</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\genf1.png" alt="Before and After 5">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Recolour</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="gallery-item">
+                        <img src="E:\landing page\recol2.png" alt="Before and After 6">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Gen_Fill</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section
+    <section class="features" id="pricing">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Simple Pricing</h2>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <h4>Basic</h4>
+                        <div class="my-4">
+                            <span style="font-size: 2.5rem; font-weight: 700;">$9</span>
+                            <span class="text-muted">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>100 Images/Month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>10 Videos/Month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>HD Output Quality</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic Support</li>
+                        </ul>
+                        <a href="#signup" class="btn btn-glow w-100">Get Started</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card" style="transform: scale(1.05); border: 2px solid var(--primary);">
+                        <div class="position-absolute" style="top: -15px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-weight: 500;">Most Popular</div>
+                        <h4>Professional</h4>
+                        <div class="my-4">
+                            <span style="font-size: 2.5rem; font-weight: 700;">$29</span>
+                            <span class="text-muted">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>500 Images/Month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>50 Videos/Month</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>4K Output Quality</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Priority Support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Batch Processing</li>
+                        </ul>
+                        <a href="#signup" class="btn btn-glow w-100">Get Started</a>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <h4>Enterprise</h4>
+                        <div class="my-4">
+                            <span style="font-size: 2.5rem; font-weight: 700;">$99</span>
+                            <span class="text-muted">/month</span>
+                        </div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited Images</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Unlimited Videos</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>8K Output Quality</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>24/7 Premium Support</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>API Access</li>
+                            <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom Integrations</li>
+                        </ul>
+                        <a href="#signup" class="btn btn-glow w-100">Get Started</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->
+
+    <!-- CTA Section -->
+    <section class="cta" id="signup">
+        <div class="container">
+            <h2>Ready to Transform Your Media?</h2>
+            <p>Join thousands of satisfied customers who are already using EnhanceAI to create stunning images and videos.</p>
+            <!-- <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card bg-white p-4 rounded-3">
+                        <form>
+                            <div class="mb-3">
+                                <input type="text" class="form-control" placeholder="Your Name">
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Your Email">
+                            </div>
+                            <button type="submit" class="btn btn-glow w-100">Start Free Trial</button>
+                            <div class="text-center mt-3 text-muted small">
+                                No credit card required. 7-day free trial.
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5>About EnhanceAI</h5>
+                    <p>We're on a mission to make professional-quality image and video enhancement accessible to everyone through the power of artificial intelligence.</p>
+                    <ul class="social-links">
+                        <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+                        <li><a href="#"><i class="fab fa-linkedin"></i></a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#signup">Sign Up</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Support</h5>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#support">Support Center</a></li>
+                        <li><a href="#tutorials">Tutorials</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="#privacy">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact</h5>
+                    <ul class="contact-info">
+                        <li><i class="fas fa-envelope me-2"></i> support@enhanceai.com</li>
+                        <li><i class="fas fa-phone me-2"></i> (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Innovation Way, Tech City, TC 12345</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <p>&copy; 2025 EnhanceAI. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+</body>
+</html>
